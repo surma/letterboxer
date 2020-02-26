@@ -16,6 +16,9 @@ import * as ejs from "ejs";
 
 export default function({ src, dest }) {
   return {
+    buildStart() {
+      this.addWatchFile(src);
+    },
     async writeBundle(bundle) {
       const template = await fsp.readFile(src, "utf8");
       const output = ejs.render(template, { bundle });

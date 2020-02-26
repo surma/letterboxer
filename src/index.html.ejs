@@ -1,3 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
+<form id="form">
+  <input type="file" accept="image/png, image/jpeg" id="file" />
+  <input type="number" value="1" min="1" max="4000" id="width" />
+  <input type="number" value="1" min="1" max="4000" id="height" />
+  <input type="color" value="#ffffff" id="color" />
+  <input type="submit" value="Letterbox!" />
+</form>
 
 <script src="<%= Object.values(bundle).find(chunk => chunk.isEntry).fileName; %>"></script>

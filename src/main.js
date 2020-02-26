@@ -12,12 +12,13 @@
  */
 
 import wasmUrl from "asc:./addition.as";
+import { compile } from "./wasm-utils.js";
 
-async function run() {
-  const { instance } = await WebAssembly.instantiateStreaming(
-    fetch(wasmUrl),
-    {}
-  );
+const form = document.querySelector("#form");
+const modulePromise = compile(fetch(wasmUrl));
+form.onsubmit = async ev => {
+  ev.preventDefault();
+  const module = await modulePromise;
+  const instance = await WebAssembly.instantiate(module, {});
   console.log(instance.exports.add(4, 5));
-}
-run();
+};

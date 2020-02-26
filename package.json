@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "build": "rollup -c",
+    "watch": "rollup -cw",
     "serve": "http-server -c0 build"
   },
   "keywords": [],
