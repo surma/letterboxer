@@ -16,6 +16,7 @@ import omt from "@surma/rollup-plugin-off-main-thread";
 import { terser } from "rollup-plugin-terser";
 import ejs from "./rollup/ejs.js";
 import { asc } from "rollup-plugin-assemblyscript";
+import babel from "rollup-plugin-babel";
 
 export default {
   input: "src/main.js",
@@ -26,6 +27,9 @@ export default {
   },
   plugins: [
     resolve(),
+    babel({
+      include: "**/*.jsx"
+    }),
     omt(),
     asc({
       compilerOptions: {

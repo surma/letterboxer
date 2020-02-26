@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2020 Google Inc. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,16 +11,22 @@
  * limitations under the License.
  */
 
-import wasmUrl from "asc:./addition.as";
-import { compile } from "./wasm-utils.js";
+function undashify(name) {
+  return name.replace(/-(\w)/g, val => val.slice(1).toUpperCase());
+}
 
-const form = document.querySelector("#form");
-const modulePromise = compile(fetch(wasmUrl));
-form.onsubmit = async ev => {
-  ev.preventDefault();
-  const module = await modulePromise;
-  const instance = await WebAssembly.instantiate(module, {});
-  console.log(instance.exports.add(4, 5));
-};
-
-import "./test.jsx";
+export function h(name, attrs, ...children) {
+  const el = document.createElement(name);
+  for (const [attrName, attrValue] of Object.entries(attrs || {})) {
+    const camelAttrName = undashify(attrName);
+    if (camelAttrName in el) {
+      el[camelAttrName] = attrValue;
+    } else {
+      el.setAttribute(attrName, attrValue);
+    }
+  }
+  for (const child of children) {
+    el.append(child);
+  }
+  return el;
+}
