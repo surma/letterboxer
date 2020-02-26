@@ -15,7 +15,7 @@ import resolve from "rollup-plugin-node-resolve";
 import omt from "@surma/rollup-plugin-off-main-thread";
 import { terser } from "rollup-plugin-terser";
 import ejs from "./rollup/ejs.js";
-import asc from "./rollup/asc.js";
+import { asc } from "rollup-plugin-assemblyscript";
 
 export default {
   input: "src/main.js",
