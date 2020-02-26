@@ -11,23 +11,9 @@
  * limitations under the License.
  */
 
-import { api } from "./worker-singleton.js";
-import { createImageData, renderImageData } from "./image-utils.js";
+import { wrap } from "comlink";
 
-const form = document.querySelector("#form");
-form.onsubmit = async ev => {
-  ev.preventDefault();
-  const imgurl = URL.createObjectURL(form.file.files[0]);
-  const image = await createImageData(imgurl);
-  const letterboxedImage = await api.letterbox(
-    image,
-    parseInt(form.width.value),
-    parseInt(form.height.value),
-    0,
-    0,
-    0,
-    255
-  );
-  const canvas = renderImageData(letterboxedImage);
-  document.body.append(canvas);
-};
+const worker = new Worker("./worker.js");
+const api = wrap(worker);
+
+export { worker, api };

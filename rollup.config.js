@@ -35,10 +35,11 @@ export default {
       compilerOptions: {
         optimizeLevel: 3,
         shrinkLevel: 2,
-        runtime: "none"
+        runtime: "none",
+        importMemory: true
       }
     }),
-    terser(),
+    // terser(),
     ejs({
       src: "src/index.html.ejs",
       dest: "build/index.html"

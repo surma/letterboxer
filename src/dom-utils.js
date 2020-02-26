@@ -10,7 +10,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 1
-export function add(a: i32, b: i32): i32 {
-  return a + b;
+
+export function nextEvent(el, name) {
+  return new Promise(resolve =>
+    el.addEventListener(name, resolve, { once: true })
+  );
 }

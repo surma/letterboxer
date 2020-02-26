@@ -25,8 +25,6 @@ export function h(name, attrs, ...children) {
       el.setAttribute(attrName, attrValue);
     }
   }
-  for (const child of children) {
-    el.append(child);
-  }
+  el.append(...children);
   return el;
 }
