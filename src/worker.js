@@ -30,7 +30,6 @@ async function letterbox(image, aspectW, aspectH, r, g, b, a) {
     targetWidth = image.width;
     targetHeight = image.width / targetRatio;
   }
-  console.log({ image, targetWidth, targetHeight });
   const targetImageSize = targetWidth * targetHeight * 4;
   const bufferSize = image.data.byteLength + targetImageSize;
   const numPages = Math.ceil(bufferSize / (64 * 1024));
@@ -57,8 +56,9 @@ async function letterbox(image, aspectW, aspectH, r, g, b, a) {
     image.data.byteLength,
     targetImageSize
   );
-  console.log(image, data);
-  return new ImageData(data, targetWidth, targetHeight);
+  // Need to slice the data here to work around a bug in Chrome.
+  // https://crbug.com/1056661
+  return new ImageData(data.slice(), targetWidth, targetHeight);
 }
 
 expose({
