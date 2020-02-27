@@ -18,6 +18,8 @@ import ejs from "./rollup/ejs.js";
 import { asc } from "rollup-plugin-assemblyscript";
 import babel from "rollup-plugin-babel";
 
+require("rimraf").sync("build");
+
 export default {
   input: "src/main.js",
   output: {
