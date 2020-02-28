@@ -10,26 +10,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-export function letterbox(sourceWidth: u32, sourceHeight: u32, targetWidth: u32, targetHeight: u32, r: u8, g: u8, b: u8, a: u8): void {
-  let outputImageStart: u32 = sourceWidth * sourceHeight * 4;
-  let outputImageSize: u32 = targetWidth * targetHeight * 4;
-  let letterboxColor: u32 = (a as u32) << 24 | (b as u32) << 16 | (g as u32) << 8 | (r as u32);
+
+export function letterbox(
+  sourceWidth: u32,
+  sourceHeight: u32,
+  targetWidth: u32,
+  targetHeight: u32,
+  r: u8,
+  g: u8,
+  b: u8,
+  a: u8
+): void {
+  let sourcesBytesPerRow = sourceWidth * 4;
+  let targetBytesPerRow = targetWidth * 4;
+  let outputImageStart = sourcesBytesPerRow * sourceHeight;
+  let outputImageSize = targetBytesPerRow * targetHeight;
+  let outputImageEnd = outputImageStart + outputImageSize;
+  let letterboxColor =
+    ((a as u32) << 24) | ((b as u32) << 16) | ((g as u32) << 8) | (r as u32);
 
   // Fill canvas with background color
   // TODO: Could be smarter here and just full the letterboxes.
-  for(let i: u32 = outputImageStart; i < outputImageStart + outputImageSize; i+=4) {
+  for (let i: u32 = outputImageStart; i < outputImageEnd; i += 4) {
     store<u32>(i, letterboxColor);
   }
 
+  // Pixel coordinates of the first image pixel within output image.
   let imageStartX = (targetWidth - sourceWidth) / 2;
   let imageStartY = (targetHeight - sourceHeight) / 2;
-  for(let y: u32 = 0; y < sourceHeight; y++) {
-    for(let x: u32 = 0; x < sourceWidth; x++) {
-      let sourcePixelAddress = (y * sourceWidth + x) * 4;
-      let pixel = load<u32>(sourcePixelAddress);
-      let targetPixelAddress = outputImageStart + ((y + imageStartY) * targetWidth + (x + imageStartX)) * 4;
-      store<u32>(targetPixelAddress, pixel);
+  // Bytes offset of that pixel.
+  let targetStartOffset =
+    outputImageStart + (imageStartY * targetWidth + imageStartX) * 4;
+
+  let sourceCurrentPixelAddress = 0;
+  let targetCurrentPixelAddress = targetStartOffset;
+
+  for (let y: u32 = 0; y < sourceHeight; y++) {
+    for (let x: u32 = 0; x < sourceWidth; x++) {
+      let pixel = load<u32>(sourceCurrentPixelAddress);
+      store<u32>(targetCurrentPixelAddress, pixel);
+      sourceCurrentPixelAddress += 4;
+      targetCurrentPixelAddress += 4;
     }
+    // Reset the output pointer to the start of the current row,
+    // then advance by one row.
+    targetCurrentPixelAddress =
+      targetCurrentPixelAddress - sourcesBytesPerRow + targetBytesPerRow;
   }
 }
