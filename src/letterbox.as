@@ -24,13 +24,13 @@ export function letterbox(sourceWidth: u32, sourceHeight: u32, targetWidth: u32,
     store<u32>(i, letterboxColor);
   }
 
-  let imageStartX = (targetWidth  - sourceWidth)  / 2;
-  let imageStartY = (targetHeight - sourceHeight) / 2;
-  let imageStepY  = (imageStartY * targetWidth + imageStartX) * 4;
+  let imageStartX  = (targetWidth  - sourceWidth)  / 2;
+  let imageStartY  = (targetHeight - sourceHeight) / 2;
+  let targetOffset = outputImageStart + (imageStartY * targetWidth + imageStartX) * 4;
 
   for(let y: u32 = 0; y < sourceHeight; y++) {
-    let sourceStride = y * sourceWidthX4;
-    let targetStride = outputImageStart + imageStepY + y * targetWidthX4;
+    let sourceStride = 0            + y * sourceWidthX4;
+    let targetStride = targetOffset + y * targetWidthX4;
     for(let x: u32 = 0; x < sourceWidth; x++) {
       let sourcePixelAddress = sourceStride + x * 4;
       let pixel = load<u32>(sourcePixelAddress);
