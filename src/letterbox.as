@@ -10,25 +10,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 export function letterbox(sourceWidth: u32, sourceHeight: u32, targetWidth: u32, targetHeight: u32, r: u8, g: u8, b: u8, a: u8): void {
-  let outputImageStart: u32 = sourceWidth * sourceHeight * 4;
-  let outputImageSize: u32 = targetWidth * targetHeight * 4;
-  let letterboxColor: u32 = (a as u32) << 24 | (b as u32) << 16 | (g as u32) << 8 | (r as u32);
+  let sourceWidthX4    = sourceWidth * 4;
+  let targetWidthX4    = targetWidth * 4;
+  let outputImageStart = sourceWidthX4 * sourceHeight;
+  let outputImageSize  = targetWidthX4 * targetHeight;
+  let letterboxColor   = (a as u32) << 24 | (b as u32) << 16 | (g as u32) << 8 | (r as u32);
 
   // Fill canvas with background color
   // TODO: Could be smarter here and just full the letterboxes.
-  for(let i: u32 = outputImageStart; i < outputImageStart + outputImageSize; i+=4) {
+  for(let i: u32 = outputImageStart, len = outputImageStart + outputImageSize; i < len; i += 4) {
     store<u32>(i, letterboxColor);
   }
 
-  let imageStartX = (targetWidth - sourceWidth) / 2;
+  let imageStartX = (targetWidth  - sourceWidth)  / 2;
   let imageStartY = (targetHeight - sourceHeight) / 2;
+  let imageStepY  = (imageStartY * targetWidth + imageStartX) * 4;
+
   for(let y: u32 = 0; y < sourceHeight; y++) {
+    let sourceStride = y * sourceWidthX4;
+    let targetStride = outputImageStart + imageStepY + y * targetWidthX4;
     for(let x: u32 = 0; x < sourceWidth; x++) {
-      let sourcePixelAddress = (y * sourceWidth + x) * 4;
+      let sourcePixelAddress = sourceStride + x * 4;
       let pixel = load<u32>(sourcePixelAddress);
-      let targetPixelAddress = outputImageStart + ((y + imageStartY) * targetWidth + (x + imageStartX)) * 4;
+
+      let targetPixelAddress = targetStride + x * 4;
       store<u32>(targetPixelAddress, pixel);
     }
   }
