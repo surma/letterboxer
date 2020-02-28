@@ -1,0 +1,10 @@
+{
+  "overrides": [
+    {
+      "files": "*.as",
+      "options": {
+        "parser": "typescript"
+      }
+    }
+  ]
+}

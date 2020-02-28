@@ -11,27 +11,42 @@
  * limitations under the License.
  */
 
-export function letterbox(sourceWidth: u32, sourceHeight: u32, targetWidth: u32, targetHeight: u32, r: u8, g: u8, b: u8, a: u8): void {
-  let sourceWidthX4    = sourceWidth * 4;
-  let targetWidthX4    = targetWidth * 4;
+export function letterbox(
+  sourceWidth: u32,
+  sourceHeight: u32,
+  targetWidth: u32,
+  targetHeight: u32,
+  r: u8,
+  g: u8,
+  b: u8,
+  a: u8
+): void {
+  let sourceWidthX4 = sourceWidth * 4;
+  let targetWidthX4 = targetWidth * 4;
   let outputImageStart = sourceWidthX4 * sourceHeight;
-  let outputImageSize  = targetWidthX4 * targetHeight;
-  let letterboxColor   = (a as u32) << 24 | (b as u32) << 16 | (g as u32) << 8 | (r as u32);
+  let outputImageSize = targetWidthX4 * targetHeight;
+  let letterboxColor =
+    ((a as u32) << 24) | ((b as u32) << 16) | ((g as u32) << 8) | (r as u32);
 
   // Fill canvas with background color
   // TODO: Could be smarter here and just full the letterboxes.
-  for(let i: u32 = outputImageStart, len = outputImageStart + outputImageSize; i < len; i += 4) {
+  for (
+    let i: u32 = outputImageStart, len = outputImageStart + outputImageSize;
+    i < len;
+    i += 4
+  ) {
     store<u32>(i, letterboxColor);
   }
 
-  let imageStartX  = (targetWidth  - sourceWidth)  / 2;
-  let imageStartY  = (targetHeight - sourceHeight) / 2;
-  let targetOffset = outputImageStart + (imageStartY * targetWidth + imageStartX) * 4;
+  let imageStartX = (targetWidth - sourceWidth) / 2;
+  let imageStartY = (targetHeight - sourceHeight) / 2;
+  let targetOffset =
+    outputImageStart + (imageStartY * targetWidth + imageStartX) * 4;
 
-  for(let y: u32 = 0; y < sourceHeight; y++) {
-    let sourceStride = 0            + y * sourceWidthX4;
+  for (let y: u32 = 0; y < sourceHeight; y++) {
+    let sourceStride = 0 + y * sourceWidthX4;
     let targetStride = targetOffset + y * targetWidthX4;
-    for(let x: u32 = 0; x < sourceWidth; x++) {
+    for (let x: u32 = 0; x < sourceWidth; x++) {
       let sourcePixelAddress = sourceStride + x * 4;
       let pixel = load<u32>(sourcePixelAddress);
 
