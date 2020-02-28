@@ -20,6 +20,7 @@ import {
 import { colorFromInput, downloadBlob } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
 
+const output = document.querySelector("#output");
 const form = document.querySelector("#form");
 form.onsubmit = async ev => {
   ev.preventDefault();
@@ -32,14 +33,14 @@ form.onsubmit = async ev => {
     ...colorFromInput(form.color),
     255
   );
-  const canvas = renderImageData(letterboxedImage);
-  document.body.append(canvas);
+  const result = renderImageData(letterboxedImage);
   render(
-    document.body,
+    output,
     <>
+      {result}
       <button
         onclick={() => {
-          const blob = canvasToBlob(canvas, "image/jpeg", 100);
+          const blob = canvasToBlob(result, "image/jpeg", 100);
           const file = new File([blob], "image.jpeg", { type: "image/jpeg" });
           downloadBlob(file);
         }}
@@ -48,13 +49,14 @@ form.onsubmit = async ev => {
       </button>
       <button
         onclick={() => {
-          const blob = canvasToBlob(canvas, "image/png");
+          const blob = canvasToBlob(result, "image/png");
           const file = new File([blob], "image.png", { type: "image/png" });
           downloadBlob(file);
         }}
       >
         PNG
       </button>
-    </>
+    </>,
+    { append: false }
   );
 };

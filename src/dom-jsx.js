@@ -11,19 +11,14 @@
  * limitations under the License.
  */
 
-function undashify(name) {
-  return name.replace(/-(\w)/g, val => val.slice(1).toUpperCase());
-}
-
 export function h(name, attrs, ...children) {
   if (typeof name === "function") {
     return name(attrs, ...children);
   }
   const el = document.createElement(name);
   for (const [attrName, attrValue] of Object.entries(attrs || {})) {
-    const camelAttrName = undashify(attrName);
-    if (camelAttrName in el) {
-      el[camelAttrName] = attrValue;
+    if (attrName in el) {
+      el[attrName] = attrValue;
     } else {
       el.setAttribute(attrName, attrValue);
     }
@@ -33,11 +28,11 @@ export function h(name, attrs, ...children) {
 }
 
 export function Fragment(attrs, ...children) {
-  return children;
+  return children.flat();
 }
 
-export function render(target, el, { empty = false } = {}) {
-  if (empty) {
+export function render(target, el, { append = true } = {}) {
+  if (!append) {
     while (target.firstChild) {
       target.firstChild.remove();
     }
