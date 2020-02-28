@@ -29,9 +29,7 @@ export default {
   },
   plugins: [
     resolve(),
-    babel({
-      include: "**/*.jsx"
-    }),
+    babel(),
     omt(),
     asc({
       compilerOptions: {

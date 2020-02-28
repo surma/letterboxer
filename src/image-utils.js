@@ -33,3 +33,9 @@ export function renderImageData(image) {
   ctx.putImageData(image, 0, 0);
   return canvas;
 }
+
+export function canvasToBlob(canvas, type, opts) {
+  return new Promise(resolve => {
+    canvas.toBlob(resolve, type, opts);
+  });
+}

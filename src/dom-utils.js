@@ -11,8 +11,24 @@
  * limitations under the License.
  */
 
+import { h } from "./dom-jsx.js";
+
 export function nextEvent(el, name) {
   return new Promise(resolve =>
     el.addEventListener(name, resolve, { once: true })
   );
+}
+
+export function colorFromInput(input) {
+  return input.value
+    .slice(1)
+    .split(/(..)/)
+    .filter(Boolean)
+    .map(v => parseInt(v, 16));
+}
+
+export function downloadBlob(b) {
+  const url = URL.createObjectURL(b);
+  const a = <a href={url} download={b.name}></a>;
+  a.click();
 }

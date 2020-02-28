@@ -12,7 +12,13 @@
  */
 
 import { api } from "./worker-singleton.js";
-import { createImageData, renderImageData } from "./image-utils.js";
+import {
+  createImageData,
+  renderImageData,
+  canvasToBlob
+} from "./image-utils.js";
+import { colorFromInput, downloadBlob } from "./dom-utils.js";
+import { h } from "./dom-jsx.js";
 
 const form = document.querySelector("#form");
 form.onsubmit = async ev => {
@@ -23,11 +29,31 @@ form.onsubmit = async ev => {
     image,
     parseInt(form.width.value),
     parseInt(form.height.value),
-    0,
-    0,
-    0,
+    ...colorFromInput(form.color),
     255
   );
   const canvas = renderImageData(letterboxedImage);
   document.body.append(canvas);
+  document.body.append(
+    <div>
+      <button
+        onclick={() => {
+          const blob = canvasToBlob(canvas, "image/jpeg", 100);
+          const file = new File([blob], "image.jpeg", { type: "image/jpeg" });
+          downloadBlob(file);
+        }}
+      >
+        JPEG
+      </button>
+      <button
+        onclick={() => {
+          const blob = canvasToBlob(canvas, "image/png");
+          const file = new File([blob], "image.png", { type: "image/png" });
+          downloadBlob(file);
+        }}
+      >
+        PNG
+      </button>
+    </div>
+  );
 };
