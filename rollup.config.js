@@ -41,7 +41,10 @@ export default {
         importMemory: true
       }
     }),
-    // terser(),
+    terser({
+      compress: true,
+      mangle: true
+    }),
     ejs({
       src: "src/index.html.ejs",
       dest: "build/index.html"
