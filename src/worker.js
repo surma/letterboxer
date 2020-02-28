@@ -11,8 +11,6 @@
  * limitations under the License.
  */
 
-import "./worker-fix.js";
-
 import { expose } from "comlink";
 
 import wasmUrl from "asc:./letterbox.as";
