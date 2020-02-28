@@ -13,10 +13,8 @@
 
 import { expose } from "comlink";
 
-import wasmUrl from "asc:./letterbox.as";
-import { compile } from "./wasm-utils.js";
+import { modulePromise } from "asc:./letterbox.as";
 
-const modulePromise = compile(fetch(wasmUrl));
 async function letterbox(image, aspectW, aspectH, r, g, b, a) {
   const sourceRatio = image.width / image.height;
   const targetRatio = aspectW / aspectH;

@@ -18,8 +18,8 @@
     "comlink": "^4.2.0",
     "ejs": "^3.0.1",
     "rimraf": "^3.0.2",
-    "rollup": "^1.31.1",
-    "rollup-plugin-assemblyscript": "0.0.2",
+    "rollup": "^1.32.0",
+    "rollup-plugin-assemblyscript": "^1.0.0",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^5.2.0"
