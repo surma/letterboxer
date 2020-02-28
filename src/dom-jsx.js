@@ -16,6 +16,9 @@ function undashify(name) {
 }
 
 export function h(name, attrs, ...children) {
+  if (typeof name === "function") {
+    return name(attrs, ...children);
+  }
   const el = document.createElement(name);
   for (const [attrName, attrValue] of Object.entries(attrs || {})) {
     const camelAttrName = undashify(attrName);
@@ -27,4 +30,20 @@ export function h(name, attrs, ...children) {
   }
   el.append(...children);
   return el;
+}
+
+export function Fragment(attrs, ...children) {
+  return children;
+}
+
+export function render(target, el, { empty = false } = {}) {
+  if (empty) {
+    while (target.firstChild) {
+      target.firstChild.remove();
+    }
+  }
+  if (!Array.isArray(el)) {
+    el = [el];
+  }
+  target.append(...el);
 }

@@ -18,7 +18,7 @@ import {
   canvasToBlob
 } from "./image-utils.js";
 import { colorFromInput, downloadBlob } from "./dom-utils.js";
-import { h } from "./dom-jsx.js";
+import { h, Fragment, render } from "./dom-jsx.js";
 
 const form = document.querySelector("#form");
 form.onsubmit = async ev => {
@@ -34,8 +34,9 @@ form.onsubmit = async ev => {
   );
   const canvas = renderImageData(letterboxedImage);
   document.body.append(canvas);
-  document.body.append(
-    <div>
+  render(
+    document.body,
+    <>
       <button
         onclick={() => {
           const blob = canvasToBlob(canvas, "image/jpeg", 100);
@@ -54,6 +55,6 @@ form.onsubmit = async ev => {
       >
         PNG
       </button>
-    </div>
+    </>
   );
 };
