@@ -21,37 +21,40 @@ export function letterbox(
   b: u8,
   a: u8
 ): void {
-  let sourceWidthX4 = sourceWidth * 4;
-  let targetWidthX4 = targetWidth * 4;
-  let outputImageStart = sourceWidthX4 * sourceHeight;
-  let outputImageSize = targetWidthX4 * targetHeight;
+  let sourcesBytesPerRow = sourceWidth * 4;
+  let targetBytesPerRow = targetWidth * 4;
+  let outputImageStart = sourcesBytesPerRow * sourceHeight;
+  let outputImageSize = targetBytesPerRow * targetHeight;
+  let outputImageEnd = outputImageStart + outputImageSize;
   let letterboxColor =
     ((a as u32) << 24) | ((b as u32) << 16) | ((g as u32) << 8) | (r as u32);
 
   // Fill canvas with background color
   // TODO: Could be smarter here and just full the letterboxes.
-  for (
-    let i: u32 = outputImageStart, len = outputImageStart + outputImageSize;
-    i < len;
-    i += 4
-  ) {
+  for (let i: u32 = outputImageStart; i < outputImageEnd; i += 4) {
     store<u32>(i, letterboxColor);
   }
 
+  // Pixel coordinates of the first image pixel within output image.
   let imageStartX = (targetWidth - sourceWidth) / 2;
   let imageStartY = (targetHeight - sourceHeight) / 2;
-  let targetOffset =
+  // Bytes offset of that pixel.
+  let targetStartOffset =
     outputImageStart + (imageStartY * targetWidth + imageStartX) * 4;
 
-  for (let y: u32 = 0; y < sourceHeight; y++) {
-    let sourceStride = 0 + y * sourceWidthX4;
-    let targetStride = targetOffset + y * targetWidthX4;
-    for (let x: u32 = 0; x < sourceWidth; x++) {
-      let sourcePixelAddress = sourceStride + x * 4;
-      let pixel = load<u32>(sourcePixelAddress);
+  let sourceCurrentPixelAddress = 0;
+  let targetCurrentPixelAddress = targetStartOffset;
 
-      let targetPixelAddress = targetStride + x * 4;
-      store<u32>(targetPixelAddress, pixel);
+  for (let y: u32 = 0; y < sourceHeight; y++) {
+    for (let x: u32 = 0; x < sourceWidth; x++) {
+      let pixel = load<u32>(sourceCurrentPixelAddress);
+      store<u32>(targetCurrentPixelAddress, pixel);
+      sourceCurrentPixelAddress += 4;
+      targetCurrentPixelAddress += 4;
     }
+    // Reset the output pointer to the start of the current row,
+    // then advance by one row.
+    targetCurrentPixelAddress =
+      targetCurrentPixelAddress - sourcesBytesPerRow + targetBytesPerRow;
   }
 }
