@@ -40,10 +40,12 @@ export default {
     {
       // Remove hash from ServiceWorker
       generateBundle(options, bundle) {
-        const swChunk = Object.values(bundle).find(
-          chunk => chunk.name === "sw"
+        const [key, chunk] = Object.entries(bundle).find(([_, chunk]) =>
+          chunk.fileName.startsWith("sw.")
         );
-        swChunk.fileName = "sw.js";
+        delete bundle[key];
+        chunk.fileName = "sw.js";
+        bundle["sw.js"] = chunk;
       }
     },
     fileList(),
