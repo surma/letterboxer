@@ -19,6 +19,7 @@ import babel from "rollup-plugin-babel";
 
 import ejs from "./rollup/ejs.js";
 import fileList from "./rollup/file-list.js";
+import statics from "./rollup/statics.js";
 
 require("rimraf").sync("build");
 
@@ -33,6 +34,9 @@ export default {
     resolve(),
     babel(),
     omt(),
+    statics({
+      files: ["src/_headers"]
+    }),
     ejs({
       src: "src/index.html.ejs",
       dest: "index.html"

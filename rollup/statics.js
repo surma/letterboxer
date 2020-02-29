@@ -10,24 +10,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-1;
-import { promises as fsp } from "fs";
-import * as ejs from "ejs";
 
-export default function({ src, dest }) {
+import { promises as fsp } from "fs";
+import { basename } from "path";
+
+export default function({ files }) {
   return {
-    name: "ejs",
-    buildStart() {
-      this.addWatchFile(src);
-    },
-    async generateBundle(options, bundle) {
-      const template = await fsp.readFile(src, "utf8");
-      const source = ejs.render(template, { bundle });
-      this.emitFile({
-        type: "asset",
-        fileName: dest,
-        source
-      });
+    name: "statics",
+    async buildStart() {
+      for (const file of files) {
+        const { id } = await this.resolve(file);
+        this.addWatchFile(id);
+        const source = await fsp.readFile(id);
+        this.emitFile({
+          type: "asset",
+          fileName: basename(id),
+          source
+        });
+      }
     }
   };
 }
