@@ -23,7 +23,7 @@ import {
   blobToDrawable,
   drawableToImageData,
   canvasToBlob,
-  renderImageData
+  imageDataToCanvas
 } from "./image-utils.js";
 import { colorFromInput, downloadBlob } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
@@ -57,14 +57,14 @@ form.onsubmit = async ev => {
     ...colorFromInput(form.color),
     255
   );
-  const result = renderImageData(letterboxedImage);
+  const canvas = imageDataToCanvas(letterboxedImage);
   render(
     output,
     <>
-      {result}
+      {canvas}
       <button
-        onclick={() => {
-          const blob = canvasToBlob(result, "image/jpeg", 100);
+        onclick={async () => {
+          const blob = await canvasToBlob(canvas, "image/jpeg", 100);
           const file = new File([blob], "image.jpeg", { type: "image/jpeg" });
           downloadBlob(file);
         }}
@@ -72,8 +72,8 @@ form.onsubmit = async ev => {
         JPEG
       </button>
       <button
-        onclick={() => {
-          const blob = canvasToBlob(result, "image/png");
+        onclick={async () => {
+          const blob = await canvasToBlob(canvas, "image/png");
           const file = new File([blob], "image.png", { type: "image/png" });
           downloadBlob(file);
         }}
