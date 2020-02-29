@@ -19,7 +19,6 @@ import babel from "rollup-plugin-babel";
 
 import ejs from "./rollup/ejs.js";
 import fileList from "./rollup/file-list.js";
-import statics from "./rollup/statics.js";
 
 require("rimraf").sync("build");
 
@@ -34,17 +33,9 @@ export default {
     resolve(),
     babel(),
     omt(),
-    statics({
-      files: ["src/_headers"],
+    ejs({
+      files: ["src/_headers", "src/manifest.json.ejs", "src/index.html.ejs"],
       hashedFiles: ["src/logo.png"]
-    }),
-    ejs({
-      src: "src/manifest.json.ejs",
-      dest: "manifest.json"
-    }),
-    ejs({
-      src: "src/index.html.ejs",
-      dest: "index.html"
     }),
     {
       // Remove hash from ServiceWorker
