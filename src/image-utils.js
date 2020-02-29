@@ -11,24 +11,41 @@
  * limitations under the License.
  */
 
-import { nextEvent } from "./dom-utils";
+import { h } from "./dom-jsx.js";
+import { nextEvent } from "./dom-utils.js";
 
-export async function createImageData(url) {
-  const img = document.createElement("img");
-  img.src = url;
-  await nextEvent(img, "load");
-  const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
+export async function blobToDrawable(blob) {
+  if ("createImageBitmap" in self) {
+    const imgurl = URL.createObjectURL(blob);
+    const buffer = await fetch(imgurl).then(r => r.blob());
+    URL.revokeObjectURL(imgurl);
+    return await createImageBitmap(buffer);
+  } else {
+    const imgurl = URL.createObjectURL(blob);
+    const img = <img src={imgurl} />;
+    if ("decode" in img) {
+      await img.decode();
+    } else {
+      await nextEvent(img, "load");
+    }
+    return img;
+  }
+}
+
+export function drawableToImageData(drawable) {
+  let canvas;
+  if ("OffscreenCanvas" in self) {
+    canvas = new OffscreenCanvas(drawable.width, drawable.height);
+  } else {
+    canvas = <canvas width={drawable.width} height={drawable.height} />;
+  }
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
-  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(drawable, 0, 0);
+  return ctx.getImageData(0, 0, drawable.width, drawable.height);
 }
 
 export function renderImageData(image) {
-  const canvas = document.createElement("canvas");
-  canvas.width = image.width;
-  canvas.height = image.height;
+  const canvas = <canvas width={image.width} height={image.height} />;
   const ctx = canvas.getContext("2d");
   ctx.putImageData(image, 0, 0);
   return canvas;

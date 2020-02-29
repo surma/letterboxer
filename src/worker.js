@@ -14,7 +14,20 @@
 import { expose } from "comlink";
 
 import { letterbox } from "./letterbox.js";
+import { blobToDrawable, drawableToImageData } from "./image-utils.js";
+
+async function hasWorkerizedCreateImageBitmap() {
+  return "createImageBitmap" in self;
+}
+
+async function hasWorkerizedOffscreenCanvas() {
+  return "OffscreenCanvas" in self;
+}
 
 expose({
+  hasWorkerizedCreateImageBitmap,
+  hasWorkerizedOffscreenCanvas,
+  blobToDrawable,
+  drawableToImageData,
   letterbox
 });

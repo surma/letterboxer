@@ -15,6 +15,20 @@ import { wrap } from "comlink";
 
 const worker = new Worker("./worker.js");
 const api = wrap(worker);
-const { letterbox } = api;
+const {
+  letterbox,
+  hasWorkerizedCreateImageBitmap,
+  hasWorkerizedOffscreenCanvas,
+  blobToDrawable,
+  drawableToImageData
+} = api;
 
-export { worker, api, letterbox };
+export {
+  worker,
+  api,
+  letterbox,
+  hasWorkerizedCreateImageBitmap,
+  hasWorkerizedOffscreenCanvas,
+  blobToDrawable,
+  drawableToImageData
+};

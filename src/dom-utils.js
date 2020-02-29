@@ -31,4 +31,5 @@ export function downloadBlob(b) {
   const url = URL.createObjectURL(b);
   const a = <a href={url} download={b.name}></a>;
   a.click();
+  // TODO: Revoke ObjectURL?
 }

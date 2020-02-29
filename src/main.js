@@ -11,21 +11,45 @@
  * limitations under the License.
  */
 
-import { letterbox } from "./worker-singleton.js";
 import {
-  createImageData,
-  renderImageData,
-  canvasToBlob
+  hasWorkerizedCreateImageBitmap,
+  drawableToImageData as workerizedDrawableToImageData,
+  blobToDrawable as workerizedBlobToDrawable,
+  letterbox,
+  hasWorkerizedOffscreenCanvas
+} from "./worker-singleton.js";
+
+import {
+  blobToDrawable,
+  drawableToImageData,
+  canvasToBlob,
+  renderImageData
 } from "./image-utils.js";
 import { colorFromInput, downloadBlob } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
+
+async function blobToImageData(blob) {
+  let bitmap;
+  if (await hasWorkerizedCreateImageBitmap()) {
+    bitmap = await workerizedBlobToDrawable(blob);
+  } else {
+    bitmap = await blobToDrawable(blob);
+  }
+  let imageData;
+  if (await hasWorkerizedOffscreenCanvas()) {
+    imageData = await workerizedDrawableToImageData(bitmap);
+  } else {
+    imageData = drawableToImageData(bitmap);
+  }
+  return imageData;
+}
 
 const output = document.querySelector("#output");
 const form = document.querySelector("#form");
 form.onsubmit = async ev => {
   ev.preventDefault();
-  const imgurl = URL.createObjectURL(form.file.files[0]);
-  const image = await createImageData(imgurl);
+  const imageBlob = form.file.files[0];
+  const image = await blobToImageData(imageBlob);
   const letterboxedImage = await letterbox(
     image,
     parseInt(form.width.value),
