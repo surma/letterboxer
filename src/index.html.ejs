@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <title>Letterboxer</title>
+<%
+  const deps = new Set(Object.values(bundle).find(chunk => chunk.fileName.startsWith("main.")).imports);
+  for(const dep of deps) { 
+    const chunk = bundle[dep];
+    (chunk.deps || []).forEach(dep => deps.add(dep));
+%>
+  <link rel="preload" href="<%= chunk.fileName; %>" as="script" />
+<% } %>
 <link rel="manifest" href="<%= Object.values(bundle).find(chunk => chunk.fileName.startsWith("manifest.")).fileName; %>" />
 <style>
   html, body {
