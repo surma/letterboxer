@@ -1,0 +1,16 @@
+{
+  "short_name": "Letterboxer",
+  "name": "Letterboxer",
+  "description": "Letterboxes your images",
+  "icons": [
+    {
+      "src": "<%= Object.values(bundle).find(chunk => /\/logo-[^/]+$/.test(chunk.fileName)).fileName; %>",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ddd",
+  "display": "standalone",
+  "theme_color": "#222"
+}

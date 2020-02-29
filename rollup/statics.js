@@ -14,19 +14,34 @@
 import { promises as fsp } from "fs";
 import { basename } from "path";
 
-export default function({ files }) {
+async function emitFile(file, hashed) {
+  const { id } = await this.resolve(file);
+  this.addWatchFile(id);
+  const source = await fsp.readFile(id);
+  if (hashed) {
+    this.emitFile({
+      type: "asset",
+      name: basename(id),
+      source
+    });
+  } else {
+    this.emitFile({
+      type: "asset",
+      fileName: basename(id),
+      source
+    });
+  }
+}
+
+export default function({ files, hashedFiles }) {
   return {
     name: "statics",
     async buildStart() {
-      for (const file of files) {
-        const { id } = await this.resolve(file);
-        this.addWatchFile(id);
-        const source = await fsp.readFile(id);
-        this.emitFile({
-          type: "asset",
-          fileName: basename(id),
-          source
-        });
+      for (let file of files) {
+        emitFile.call(this, file, false);
+      }
+      for (let file of hashedFiles) {
+        emitFile.call(this, file, true);
       }
     }
   };
