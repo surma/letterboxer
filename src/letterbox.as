@@ -111,8 +111,8 @@ export function letterbox(
   );
   // Fill in lower/right letterbox.
   drawRect(
-    targetWidth - letterboxWidth,
-    targetHeight - letterboxHeight,
+    regionStartX === 0 ? 0 : letterboxWidth + sourceWidth,
+    regionStartY === 0 ? 0 : letterboxHeight + sourceHeight,
     targetWidth,
     targetHeight,
     targetBytesPerRow,
