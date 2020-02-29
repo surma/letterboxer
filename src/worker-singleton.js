@@ -15,5 +15,6 @@ import { wrap } from "comlink";
 
 const worker = new Worker("./worker.js");
 const api = wrap(worker);
+const { letterbox } = api;
 
-export { worker, api };
+export { worker, api, letterbox };

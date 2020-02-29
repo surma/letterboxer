@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-import { api } from "./worker-singleton.js";
+import { letterbox } from "./worker-singleton.js";
 import {
   createImageData,
   renderImageData,
@@ -26,7 +26,7 @@ form.onsubmit = async ev => {
   ev.preventDefault();
   const imgurl = URL.createObjectURL(form.file.files[0]);
   const image = await createImageData(imgurl);
-  const letterboxedImage = await api.letterbox(
+  const letterboxedImage = await letterbox(
     image,
     parseInt(form.width.value),
     parseInt(form.height.value),
