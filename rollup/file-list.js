@@ -29,7 +29,9 @@ export default function() {
       return `export default ${placeholder};`;
     },
     generateBundle(_outputOptions, bundle) {
-      const fileList = JSON.stringify(Object.keys(bundle));
+      const fileList = JSON.stringify(
+        Object.values(bundle).map(item => item.fileName)
+      );
 
       Object.values(bundle)
         .filter(item => item.code)

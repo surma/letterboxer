@@ -37,6 +37,15 @@ export default {
       src: "src/index.html.ejs",
       dest: "index.html"
     }),
+    {
+      // Remove hash from ServiceWorker
+      generateBundle(options, bundle) {
+        const swChunk = Object.values(bundle).find(
+          chunk => chunk.name === "sw"
+        );
+        swChunk.fileName = "sw.js";
+      }
+    },
     fileList(),
     asc({
       compilerOptions: {
@@ -49,15 +58,6 @@ export default {
     terser({
       compress: true,
       mangle: true
-    }),
-    {
-      // Remove hash from ServiceWorker
-      generateBundle(options, bundle) {
-        const swChunk = Object.values(bundle).find(
-          chunk => chunk.name === "sw"
-        );
-        swChunk.fileName = "sw.js";
-      }
-    }
+    })
   ]
 };
