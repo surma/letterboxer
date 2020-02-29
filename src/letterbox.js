@@ -12,7 +12,7 @@ export async function letterbox(image, aspectW, aspectH, r, g, b, a) {
     targetHeight = image.width / targetRatio;
   }
   const targetImageSize = targetWidth * targetHeight * 4;
-  const bufferSize = image.data.byteLength + targetImageSize;
+  const bufferSize = targetImageSize;
   const numPages = Math.ceil(bufferSize / (64 * 1024));
   const memory = new WebAssembly.Memory({ initial: numPages });
   const instance = await WebAssembly.instantiate(await modulePromise, {
@@ -32,11 +32,7 @@ export async function letterbox(image, aspectW, aspectH, r, g, b, a) {
     a
   );
 
-  const data = new Uint8ClampedArray(
-    memory.buffer,
-    image.data.byteLength,
-    targetImageSize
-  );
+  const data = new Uint8ClampedArray(memory.buffer, 0, targetImageSize);
   // Need to slice the data here to work around a bug in Chrome.
   // https://crbug.com/1056661
   return new ImageData(data.slice(), targetWidth, targetHeight);
