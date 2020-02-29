@@ -10,23 +10,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-1;
-import { promises as fsp } from "fs";
-import * as ejs from "ejs";
+const placeholder = "___REPLACE_THIS_WITH_FILE_LIST_LATER";
+const importMarker = "file-list:";
 
-export default function({ src, dest }) {
+export default function() {
   return {
-    buildStart() {
-      this.addWatchFile(src);
+    name: "file-list",
+    resolveId(id) {
+      if (id !== importMarker) {
+        return;
+      }
+      return id;
     },
-    async generateBundle(options, bundle) {
-      const template = await fsp.readFile(src, "utf8");
-      const source = ejs.render(template, { bundle });
-      this.emitFile({
-        type: "asset",
-        fileName: dest,
-        source
-      });
+    load(id) {
+      if (id !== importMarker) {
+        return;
+      }
+      return `export default ${placeholder};`;
+    },
+    generateBundle(_outputOptions, bundle) {
+      const fileList = JSON.stringify(Object.keys(bundle));
+
+      Object.values(bundle)
+        .filter(item => item.code)
+        .forEach(item => {
+          item.code = item.code.replace(placeholder, fileList);
+        });
     }
   };
 }

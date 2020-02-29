@@ -60,3 +60,5 @@ form.onsubmit = async ev => {
     { append: false }
   );
 };
+
+navigator.serviceWorker.register("./sw.js");

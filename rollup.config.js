@@ -14,14 +14,16 @@
 import resolve from "rollup-plugin-node-resolve";
 import omt from "@surma/rollup-plugin-off-main-thread";
 import { terser } from "rollup-plugin-terser";
-import ejs from "./rollup/ejs.js";
 import { asc } from "rollup-plugin-assemblyscript";
 import babel from "rollup-plugin-babel";
+
+import ejs from "./rollup/ejs.js";
+import fileList from "./rollup/file-list.js";
 
 require("rimraf").sync("build");
 
 export default {
-  input: "src/main.js",
+  input: ["src/main.js", "src/sw.js"],
   output: {
     dir: "build",
     format: "amd",
@@ -31,6 +33,11 @@ export default {
     resolve(),
     babel(),
     omt(),
+    ejs({
+      src: "src/index.html.ejs",
+      dest: "index.html"
+    }),
+    fileList(),
     asc({
       compilerOptions: {
         optimizeLevel: 3,
@@ -43,9 +50,14 @@ export default {
       compress: true,
       mangle: true
     }),
-    ejs({
-      src: "src/index.html.ejs",
-      dest: "build/index.html"
-    })
+    {
+      // Remove hash from ServiceWorker
+      generateBundle(options, bundle) {
+        const swChunk = Object.values(bundle).find(
+          chunk => chunk.name === "sw"
+        );
+        swChunk.fileName = "sw.js";
+      }
+    }
   ]
 };
