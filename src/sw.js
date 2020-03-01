@@ -16,9 +16,9 @@ import fileList from "file-list:";
 const excludedResources = ["sw.js", "_headers"];
 
 addEventListener("install", event => {
-  const resourcesToCache = fileList.filter(
-    file => !excludedResources.includes(file)
-  );
+  const resourcesToCache = fileList
+    .filter(file => !excludedResources.includes(file.name))
+    .map(file => file.name);
 
   event.waitUntil(
     (async () => {

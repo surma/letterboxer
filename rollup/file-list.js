@@ -10,6 +10,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { createHash } from "crypto";
+
 const placeholder = "___REPLACE_THIS_WITH_FILE_LIST_LATER";
 const importMarker = "file-list:";
 
@@ -30,7 +33,19 @@ export default function() {
     },
     generateBundle(_outputOptions, bundle) {
       const fileList = JSON.stringify(
-        Object.values(bundle).map(item => item.fileName)
+        Object.values(bundle).map(item => {
+          const name = item.fileName;
+          let source;
+          if (item.type === "asset") {
+            source = item.source;
+          } else {
+            source = item.code;
+          }
+          const digest = createHash("SHA256")
+            .update(source)
+            .digest("hex");
+          return { name, digest };
+        })
       );
 
       Object.values(bundle)
