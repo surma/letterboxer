@@ -25,8 +25,9 @@ import {
   canvasToBlob,
   imageDataToCanvas
 } from "./image-utils.js";
-import { colorFromInput, downloadBlob } from "./dom-utils.js";
+import { colorFromInput, downloadBlob, idle } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
+import { controller } from "./image-stream-singleton.js";
 
 async function blobToImageData(blob) {
   let bitmap;
@@ -49,6 +50,7 @@ const form = document.querySelector("#form");
 form.onsubmit = async ev => {
   ev.preventDefault();
   const imageBlob = form.file.files[0];
+  controller.enqueue(imageBlob);
   const image = await blobToImageData(imageBlob);
   const letterboxedImage = await letterbox(
     image,
@@ -85,4 +87,4 @@ form.onsubmit = async ev => {
   );
 };
 
-navigator.serviceWorker.register("./sw.js");
+idle().then(() => import("./sw-installer.js"));

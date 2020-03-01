@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <title>Letterboxer</title>
 <%
-  const deps = new Set(Object.values(bundle).find(chunk => chunk.fileName.startsWith("main.")).imports);
+  const deps = new Set(Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("main-")).imports);
   for(const dep of deps) { 
     const chunk = bundle[dep];
     (chunk.deps || []).forEach(dep => deps.add(dep));
@@ -28,4 +28,4 @@
 </form>
 <div id="output"></div>
 
-<script src="<%= Object.values(bundle).find(chunk => chunk.fileName.startsWith("main.")).fileName; %>"></script>
+<script src="<%= Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("main-")).fileName; %>"></script>
