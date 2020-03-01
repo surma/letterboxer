@@ -23,7 +23,7 @@ import fileList from "./rollup/file-list.js";
 require("rimraf").sync("build");
 
 export default {
-  input: ["src/main.js", "src/sw.js"],
+  input: ["src/init.js", "src/sw.js"],
   output: {
     dir: "build",
     format: "amd",

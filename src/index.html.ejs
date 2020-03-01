@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <title>Letterboxer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <%
-  const deps = new Set(Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("main-")).imports);
+  const deps = new Set(Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("init-")).imports);
   for(const dep of deps) { 
     const chunk = bundle[dep];
     (chunk.deps || []).forEach(dep => deps.add(dep));
@@ -14,18 +15,14 @@
     background: #ddd;
   }
   canvas {
-    width: 100%;
-    image-rendering: pixelated;
+    max-width: 100%;
   }
 </style>
 
-<form id="form">
-  <input type="file" accept="image/png, image/jpeg" id="file" />
-  <input type="number" value="1" min="1" max="4000" id="width" />
-  <input type="number" value="1" min="1" max="4000" id="height" />
-  <input type="color" value="#ffffff" id="color" />
-  <input type="submit" value="Letterbox!" />
-</form>
-<div id="output"></div>
+<main id="output">
+  <div id="dropzone">
+    <input type="file" accept="image/png, image/jpeg" id="file" />
+  </div>
+</main>
 
-<script src="<%= Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("main-")).fileName; %>"></script>
+<script src="<%= Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("init-")).fileName; %>"></script>

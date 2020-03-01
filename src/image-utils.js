@@ -44,8 +44,12 @@ export function drawableToImageData(drawable) {
   return ctx.getImageData(0, 0, drawable.width, drawable.height);
 }
 
-export function imageDataToCanvas(imageData) {
-  const canvas = <canvas width={imageData.width} height={imageData.height} />;
+export function imageDataToCanvas(imageData, canvas) {
+  if (!canvas) {
+    canvas = <canvas />;
+  }
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
   const ctx = canvas.getContext("2d");
   ctx.putImageData(imageData, 0, 0);
   return canvas;

@@ -31,8 +31,8 @@ export function Fragment(attrs, ...children) {
   return children.flat();
 }
 
-export function render(target, el, { append = true } = {}) {
-  if (!append) {
+export function render(target, el, { append = false, replace = true } = {}) {
+  if (!append && replace) {
     while (target.firstChild) {
       target.firstChild.remove();
     }
