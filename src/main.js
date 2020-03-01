@@ -17,7 +17,10 @@ import {
   forEach,
   subscribe,
   filter,
-  discard
+  discard,
+  merge,
+  fromAsyncFunction,
+  concatAll
 } from "observables-with-streams";
 
 import {
@@ -35,7 +38,7 @@ import {
 } from "./image-utils.js";
 import { colorFromInput, downloadBlob, idle } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
-import { gateOn } from "./ows-utils.js";
+import { gateOn, fromAsyncInitFunction } from "./ows-utils.js";
 
 async function blobToImageData(blob) {
   let bitmap;
@@ -57,17 +60,27 @@ export async function main() {
   const output = document.querySelector("#output");
   const dropZoneView = output.querySelector("#dropzone");
   const configureViewPromise = import("./views/configure.js");
-  let chain = fromEvent(dropZoneView.querySelector("input"), "change")
-    .pipeThrough(filter(ev => ev.target.files && ev.target.files.length >= 1))
-    .pipeThrough(map(ev => ev.target.files[0]))
-    .pipeThrough(
-      forEach(async file => {
-        const { view, image } = await configureViewPromise;
-        const url = URL.createObjectURL(file);
-        image.src = url;
-        render(output, view);
-      })
-    );
+  let chain = merge(
+    fromEvent(dropZoneView.querySelector("input"), "change")
+      .pipeThrough(filter(ev => ev.target.files && ev.target.files.length >= 1))
+      .pipeThrough(map(ev => ev.target.files[0])),
+    fromAsyncInitFunction(async () => {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return null;
+      const mostActiveSW = reg.active || reg.waiting || reg.installing;
+      mostActiveSW.postMessage("READY");
+      return fromEvent(navigator.serviceWorker, "message").pipeThrough(
+        map(ev => ev.data.file)
+      );
+    })
+  ).pipeThrough(
+    forEach(async file => {
+      const { view, image } = await configureViewPromise;
+      const url = URL.createObjectURL(file);
+      image.src = url;
+      render(output, view);
+    })
+  );
 
   const spinnerViewPromise = import("./views/spinner.js");
   const resultViewPromise = import("./views/result.js");
@@ -119,5 +132,7 @@ export async function main() {
     );
   }
 
-  idle().then(() => import("./sw-installer.js"));
+  idle().then(() => {
+    navigator.serviceWorker.register("./sw.js");
+  });
 }
