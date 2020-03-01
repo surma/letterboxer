@@ -6,10 +6,10 @@ export async function letterbox(image, aspectW, aspectH, r, g, b, a) {
   let targetWidth, targetHeight;
   if (targetRatio >= sourceRatio) {
     targetHeight = image.height;
-    targetWidth = image.height * targetRatio;
+    targetWidth = Math.round(image.height * targetRatio);
   } else {
     targetWidth = image.width;
-    targetHeight = image.width / targetRatio;
+    targetHeight = Math.round(image.width / targetRatio);
   }
   const targetImageSize = targetWidth * targetHeight * 4;
   const bufferSize = targetImageSize;
