@@ -11,6 +11,8 @@
  * limitations under the License.
  */
 
+import { serveShareTarget } from "./sw-utils.js";
+
 import fileList from "file-list:";
 
 const excludedResources = ["sw.js", "_headers"];
@@ -33,6 +35,11 @@ addEventListener("activate", event => {
 });
 
 addEventListener("fetch", event => {
+  const url = new URL(event.request.url);
+  if (url.pathname === "/share-target" && event.request.method === "POST") {
+    serveShareTarget(event);
+    return;
+  }
   if (event.request.method !== "GET") {
     return;
   }
@@ -45,3 +52,26 @@ addEventListener("fetch", event => {
     })()
   );
 });
+
+const waitingResolvers = new Map();
+addEventListener("message", ev => {
+  const resolvers = waitingResolvers.get(ev.data);
+  if (!resolvers) {
+    return;
+  }
+  waitingResolvers.delete(ev.source);
+  resolvers.forEach(resolve => resolve(ev));
+});
+
+// Dirrrrty
+self.nextMessage = message => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(`Didn’t receive "${message}" in time`), 5000);
+    let resolvers = waitingResolvers.get(message);
+    if (!resolvers) {
+      resolvers = [];
+      waitingResolvers.set(message, resolvers);
+    }
+    resolvers.push(resolve);
+  });
+};
