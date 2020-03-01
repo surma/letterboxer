@@ -3,7 +3,9 @@ import {
   subchain,
   map,
   buffer,
-  filter
+  filter,
+  fromAsyncFunction,
+  concatAll
 } from "observables-with-streams";
 
 export function gateOn(other) {
@@ -13,4 +15,8 @@ export function gateOn(other) {
       .pipeThrough(filter(v => v.length > 0))
       .pipeThrough(map(arr => arr.pop()))
   );
+}
+
+export function fromAsyncInitFunction(f) {
+  return fromAsyncFunction(f).pipeThrough(concatAll());
 }

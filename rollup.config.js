@@ -34,12 +34,7 @@ export default {
     babel(),
     omt(),
     ejs({
-      files: [
-        "src/_headers",
-        "src/manifest.json.ejs",
-        "src/index.html.ejs",
-        "src/share-form.html"
-      ],
+      files: ["src/_headers", "src/manifest.json.ejs", "src/index.html.ejs"],
       hashedFiles: ["src/logo.png"]
     }),
     {
