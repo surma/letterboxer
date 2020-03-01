@@ -51,11 +51,13 @@ export default function({ files, hashedFiles }) {
       const ejsAssets = Object.values(bundle)
         .filter(chunk => chunk.type === "asset")
         .filter(asset => asset.fileName.endsWith(".ejs"));
+      ejsAssets.forEach(asset => {
+        asset.fileName = asset.fileName.replace(/\.ejs$/, "");
+      });
       for (const asset of ejsAssets) {
         const template = asset.source.toString();
         const newSource = ejs.render(template, { bundle });
         asset.source = newSource;
-        asset.fileName = asset.fileName.replace(/\.ejs$/, "");
       }
     }
   };
