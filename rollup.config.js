@@ -27,7 +27,7 @@ export default {
   output: {
     dir: "build",
     format: "amd",
-    entryFileNames: "[name].[hash].js"
+    entryFileNames: "[name]-[hash].js"
   },
   plugins: [
     resolve(),
@@ -38,10 +38,10 @@ export default {
       hashedFiles: ["src/logo.png"]
     }),
     {
-      // Remove hash from ServiceWorker
+      name: "ServiceWorker hash remover",
       generateBundle(options, bundle) {
         const [key, chunk] = Object.entries(bundle).find(([_, chunk]) =>
-          chunk.fileName.startsWith("sw.")
+          chunk.fileName.startsWith("sw-")
         );
         delete bundle[key];
         chunk.fileName = "sw.js";

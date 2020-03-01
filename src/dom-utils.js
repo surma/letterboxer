@@ -33,3 +33,14 @@ export function downloadBlob(b) {
   a.click();
   // TODO: Revoke ObjectURL?
 }
+
+export function idle() {
+  return new Promise(resolve => {
+    if ("requestIdleCallback" in self) {
+      requestIdleCallback(resolve);
+    } else {
+      // ¯\_(ツ)_/¯
+      setTimeout(resolve, 5000);
+    }
+  });
+}

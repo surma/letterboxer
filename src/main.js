@@ -25,7 +25,7 @@ import {
   canvasToBlob,
   imageDataToCanvas
 } from "./image-utils.js";
-import { colorFromInput, downloadBlob } from "./dom-utils.js";
+import { colorFromInput, downloadBlob, idle } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
 
 async function blobToImageData(blob) {
@@ -85,4 +85,4 @@ form.onsubmit = async ev => {
   );
 };
 
-navigator.serviceWorker.register("./sw.js");
+idle().then(() => import("./sw-installer.js"));
