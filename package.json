@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
-    "serve": "http-server -c0 build"
+    "serve": "serve build"
   },
   "keywords": [],
   "author": "Surma <surma@surma.dev>",
@@ -28,10 +28,10 @@
     "web-streams-polyfill": "^2.1.0"
   },
   "devDependencies": {
-    "http-server": "^0.12.1",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "serve": "^11.3.0"
   },
   "husky": {
     "hooks": {
