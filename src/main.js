@@ -132,7 +132,5 @@ export async function main() {
     );
   }
 
-  idle().then(() => {
-    navigator.serviceWorker.register("./sw.js");
-  });
+  idle().then(() => import("./sw-installer.js"));
 }

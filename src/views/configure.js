@@ -19,6 +19,11 @@ let height;
 let color;
 const view = (
   <>
+    <style>{`
+      img {
+        max-width: 100%;
+      }
+    `}</style>
     {(back = <button id="back">Back</button>)}
     {(width = <input type="number" value="1" min="1" max="4000" id="width" />)}
     {

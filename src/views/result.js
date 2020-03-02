@@ -6,6 +6,11 @@ let canvas;
 let back;
 const view = (
   <>
+    <style>{`
+      canvas {
+        max-width: 100%;
+      }
+    `}</style>
     {(back = <button>Back</button>)}
     {(canvas = <canvas />)}
     <button
