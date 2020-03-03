@@ -18,9 +18,7 @@ import {
   subscribe,
   filter,
   discard,
-  merge,
-  fromAsyncFunction,
-  concatAll
+  merge
 } from "observables-with-streams";
 
 import {
@@ -33,12 +31,17 @@ import {
 import {
   blobToDrawable,
   drawableToImageData,
-  canvasToBlob,
   imageDataToCanvas
 } from "./image-utils.js";
-import { colorFromInput, downloadBlob, idle } from "./dom-utils.js";
+import { colorFromInput, idle } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
 import { gateOn, fromAsyncInitFunction } from "./ows-utils.js";
+import "file-drop-element";
+import {
+  view as dropZoneView,
+  input as dropInput,
+  drop
+} from "./views/drop-zone.js";
 
 async function blobToImageData(blob) {
   let bitmap;
@@ -56,12 +59,9 @@ async function blobToImageData(blob) {
   return imageData;
 }
 
-export async function main() {
-  const output = document.querySelector("#output");
-  const dropZoneView = output.querySelector("#dropzone");
-  const configureViewPromise = import("./views/configure.js");
-  let chain = merge(
-    fromEvent(dropZoneView.querySelector("input"), "change")
+function input() {
+  return merge(
+    fromEvent(dropInput, "change")
       .pipeThrough(filter(ev => ev.target.files && ev.target.files.length >= 1))
       .pipeThrough(map(ev => ev.target.files[0])),
     fromAsyncInitFunction(async () => {
@@ -72,8 +72,15 @@ export async function main() {
       return fromEvent(navigator.serviceWorker, "message").pipeThrough(
         map(ev => ev.data.file)
       );
-    })
-  ).pipeThrough(
+    }),
+    fromEvent(drop, "filedrop").pipeThrough(map(ev => ev.files[0]))
+  );
+}
+
+export async function main() {
+  const output = document.querySelector("#output");
+  const configureViewPromise = import("./views/configure.js");
+  let chain = input().pipeThrough(
     forEach(async file => {
       const { view, image } = await configureViewPromise;
       const url = URL.createObjectURL(file);

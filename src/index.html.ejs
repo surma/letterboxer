@@ -17,9 +17,22 @@
 </style>
 
 <main id="output">
-  <div id="dropzone">
+  <style>
+    file-drop {
+      display: block;
+      width: 100%;
+      height: 100vh;
+    }
+    .drop-valid {
+      background: green;
+    }
+    .drop-invalid {
+      background: red;
+    }
+  </style>
+  <file-drop accept="image/*" id="dropzone">
     <input type="file" accept="image/png, image/jpeg" id="file" />
-  </div>
+  </file-drop>
 </main>
 
 <script src="<%= Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("init-")).fileName; %>"></script>
