@@ -2,7 +2,18 @@
 <title>Letterboxer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <%
-  const deps = new Set(Object.values(bundle).find(chunk => chunk.isEntry && chunk.fileName.startsWith("init-")).imports);
+  function getChunk(name) {
+    return Object.values(bundle)
+      .find(chunk => (chunk.isEntry || chunk.isDynamicEntry) && chunk.fileName.startsWith(`${name}-`));
+  }
+  const init = getChunk("init");
+  const main = getChunk("main");
+  const deps = new Set([
+    init.fileName,
+    ...init.imports,
+    main.fileName,
+    ...main.imports
+  ]);
   for(const dep of deps) { 
     const chunk = bundle[dep];
     (chunk.deps || []).forEach(dep => deps.add(dep));

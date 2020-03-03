@@ -11,8 +11,6 @@
  * limitations under the License.
  */
 
-import { main } from "./main.js";
-
 const hasReadableStream = "ReadableStream" in self;
 const hasWritableStream = "WritableStream" in self;
 const hasTransformStream = "TransformStream" in self;
@@ -21,5 +19,5 @@ const hasTransformStream = "TransformStream" in self;
   if (!hasReadableStream || !hasWritableStream || !hasTransformStream) {
     await import("web-streams-polyfill/es2018/");
   }
-  main();
+  import("./main.js");
 })();

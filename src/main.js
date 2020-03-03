@@ -78,7 +78,7 @@ function input() {
   );
 }
 
-export async function main() {
+async function main() {
   const output = document.querySelector("#output");
   const configureViewPromise = import("./views/configure.js");
   let chain = input().pipeThrough(
@@ -142,6 +142,7 @@ export async function main() {
       })
     );
   }
-
-  idle().then(() => import("./sw-installer.js"));
 }
+
+main();
+idle().then(() => import("./sw-installer.js"));
