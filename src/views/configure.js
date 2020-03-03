@@ -82,4 +82,8 @@ async function getWithDefault(key, def) {
     );
 })();
 
+export function reset() {
+  image.src = "";
+}
+
 export { view, back, submit, image, width, height, color };

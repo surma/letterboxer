@@ -40,7 +40,8 @@ import "file-drop-element";
 import {
   view as dropZoneView,
   input as dropInput,
-  drop
+  drop,
+  reset as dropZoneReset
 } from "./views/drop-zone.js";
 
 async function blobToImageData(blob) {
@@ -82,7 +83,8 @@ export async function main() {
   const configureViewPromise = import("./views/configure.js");
   let chain = input().pipeThrough(
     forEach(async file => {
-      const { view, image } = await configureViewPromise;
+      const { view, image, reset } = await configureViewPromise;
+      reset();
       const url = URL.createObjectURL(file);
       image.src = url;
       render(output, view);
@@ -126,6 +128,7 @@ export async function main() {
     const { back } = await configureViewPromise;
     fromEvent(back, "click").pipeTo(
       subscribe(() => {
+        dropZoneReset();
         render(output, dropZoneView);
       })
     );
@@ -134,6 +137,7 @@ export async function main() {
     const { back } = await resultViewPromise;
     fromEvent(back, "click").pipeTo(
       subscribe(() => {
+        dropZoneReset();
         render(output, dropZoneView);
       })
     );

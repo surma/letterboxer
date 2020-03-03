@@ -15,4 +15,8 @@ const view = document.querySelector("#output #dropzone");
 const input = view.querySelector("input");
 const drop = view;
 
+export function reset() {
+  input.value = "";
+}
+
 export { view, input, drop };
