@@ -11,12 +11,40 @@
  * limitations under the License.
  */
 
-const view = document.querySelector("#output #dropzone");
-const input = view.querySelector("input");
-const drop = view;
+import View, { h } from "../view.js";
 
-export function reset() {
-  input.value = "";
+export default class DropZoneView extends View {
+  get _markup() {
+    return (
+      <file-drop accept="image/*" id="dropzone" data-bind="drop">
+        <style>{`
+          file-drop {
+            display: block;
+            width: 100%;
+            height: 100vh;
+          }
+          .drop-valid {
+            background: green;
+          }
+          .drop-invalid {
+            background: red;
+          }
+        `}</style>
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          id="file"
+          data-bind="input"
+        />
+      </file-drop>
+    );
+  }
+
+  constructor(hydrateEl) {
+    super(hydrateEl);
+  }
+
+  reset() {
+    this.bindings.input.value = "";
+  }
 }
-
-export { view, input, drop };

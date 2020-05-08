@@ -56,10 +56,10 @@ export default {
         runtime: "none",
         importMemory: true
       }
-    }),
-    terser({
-      compress: true,
-      mangle: true
     })
+    // terser({
+    //   compress: true,
+    //   mangle: true
+    // })
   ]
 };

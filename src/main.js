@@ -37,12 +37,16 @@ import { colorFromInput, idle } from "./dom-utils.js";
 import { h, Fragment, render } from "./dom-jsx.js";
 import { gateOn, fromAsyncInitFunction } from "./ows-utils.js";
 import "file-drop-element";
-import {
-  view as dropZoneView,
-  input as dropInput,
-  drop,
-  reset as dropZoneReset
-} from "./views/drop-zone.js";
+import DropZoneView from // view as dropZoneView,
+// input as dropInput,
+// drop,
+// reset as dropZoneReset
+"./views/drop-zone.js";
+
+self.dropZoneView = new DropZoneView(document.querySelector("#output"));
+const { dropInput, drop } = dropZoneView.bindings;
+const dropZoneReset = dropZoneView.reset.bind(dropZoneView);
+const dropZoneView = dropZoneView.el;
 
 async function blobToImageData(blob) {
   let bitmap;
