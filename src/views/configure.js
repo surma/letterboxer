@@ -17,6 +17,7 @@ let submit;
 let width;
 let height;
 let color;
+let border;
 const view = (
   <>
     <style>{`
@@ -29,6 +30,18 @@ const view = (
     {
       (height = (
         <input type="number" value="1" min="1" max="4000" id="height" />
+      ))
+    }
+    {
+      (border = (
+        <input
+          type="number"
+          value="10"
+          min="0"
+          max="50"
+          step="0.1"
+          id="border"
+        />
       ))
     }
     {(color = <input type="color" value="#ffffff" id="color" />)}
@@ -46,14 +59,16 @@ async function getWithDefault(key, def) {
 }
 
 (async function() {
-  const [widthV, heightV, colorV] = await Promise.all([
+  const [widthV, heightV, colorV, borderV] = await Promise.all([
     getWithDefault("width", 1),
     getWithDefault("height", 1),
-    getWithDefault("color", "#ffffff")
+    getWithDefault("color", "#ffffff"),
+    getWithDefault("border", "10")
   ]);
   width.value = widthV;
   height.value = heightV;
   color.value = colorV;
+  border.value = borderV;
   combineLatest(
     concat(
       just(widthV),
@@ -70,14 +85,19 @@ async function getWithDefault(key, def) {
     concat(
       just(colorV),
       fromEvent(color, "change").pipeThrough(map(ev => ev.target.value))
+    ),
+    concat(
+      just(borderV),
+      fromEvent(border, "change").pipeThrough(map(ev => ev.target.value))
     )
   )
     .pipeThrough(debounce(1000))
     .pipeTo(
-      subscribe(async ([width, height, color]) => {
+      subscribe(async ([width, height, color, border]) => {
         set("width", width);
         set("height", height);
         set("color", color);
+        set("border", border);
       })
     );
 })();
@@ -86,4 +106,4 @@ export function reset() {
   image.src = "";
 }
 
-export { view, back, submit, image, width, height, color };
+export { border, view, back, submit, image, width, height, color };

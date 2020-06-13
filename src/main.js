@@ -78,13 +78,28 @@ function input() {
   );
 }
 
+function greatestCommonDivisor(x, y) {
+  x = Math.abs(x);
+  y = Math.abs(y);
+  while (y) {
+    let t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
+}
+
 async function main() {
   const output = document.querySelector("#output");
   const configureViewPromise = import("./views/configure.js");
   let chain = input().pipeThrough(
     forEach(async file => {
-      const { view, image, reset } = await configureViewPromise;
+      const { width, height, view, image, reset } = await configureViewPromise;
       reset();
+      const bitmap = await createImageBitmap(file);
+      const gcd = greatestCommonDivisor(bitmap.width, bitmap.height);
+      width.value = bitmap.width / gcd;
+      height.value = bitmap.height / gcd;
       const url = URL.createObjectURL(file);
       image.src = url;
       render(output, view);
@@ -93,7 +108,7 @@ async function main() {
 
   const spinnerViewPromise = import("./views/spinner.js");
   const resultViewPromise = import("./views/result.js");
-  const { submit, width, height, color } = await configureViewPromise;
+  const { submit, border, width, height, color } = await configureViewPromise;
   chain = chain
     .pipeThrough(gateOn(fromEvent(submit, "click")))
     .pipeThrough(
@@ -109,6 +124,7 @@ async function main() {
           image,
           parseInt(width.value),
           parseInt(height.value),
+          parseFloat(border.value),
           ...colorFromInput(color),
           255
         );
