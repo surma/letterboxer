@@ -23,7 +23,7 @@ export function h(name, attrs, ...children) {
       el.setAttribute(attrName, attrValue);
     }
   }
-  el.append(...children);
+  el.append(...children.flat());
   return el;
 }
 

@@ -11,6 +11,17 @@ import {
 
 import { h, Fragment } from "../dom-jsx.js";
 
+function greatestCommonDivisor(x, y) {
+  x = Math.abs(x);
+  y = Math.abs(y);
+  while (y) {
+    let t = y;
+    y = x % y;
+    x = t;
+  }
+  return x;
+}
+
 let image;
 let back;
 let submit;
@@ -26,26 +37,71 @@ const view = (
       }
     `}</style>
     {(back = <button id="back">Back</button>)}
-    {(width = <input type="number" value="1" min="1" max="4000" id="width" />)}
-    {
-      (height = (
-        <input type="number" value="1" min="1" max="4000" id="height" />
-      ))
-    }
-    {
-      (border = (
-        <input
-          type="number"
-          value="10"
-          min="0"
-          max="50"
-          step="0.1"
-          id="border"
-        />
-      ))
-    }
-    {(color = <input type="color" value="#ffffff" id="color" />)}
-    {(submit = <input type="submit" value="Letterbox!" />)}
+    <fieldset>
+      <legend>Aspect ratio:</legend>
+      {
+        (width = (
+          <input type="number" value="1" min="1" max="4000" id="width" />
+        ))
+      }
+      {
+        (height = (
+          <input type="number" value="1" min="1" max="4000" id="height" />
+        ))
+      }
+      {["1:1", "2:1", "2:3", "4:3", "4:5", "16:9"].map(ratio => {
+        const [wv, hv] = ratio.split(":");
+        return (
+          <button
+            onclick={() => {
+              width.value = wv;
+              height.value = hv;
+            }}
+          >
+            {ratio}
+          </button>
+        );
+      })}
+      <button
+        onclick={() => {
+          [width.value, height.value] = [height.value, width.value];
+        }}
+      >
+        Swap
+      </button>
+      <button
+        onclick={() => {
+          if (!image || !image.src) {
+            return;
+          }
+          const { naturalWidth, naturalHeight } = image;
+          const factor = greatestCommonDivisor(naturalWidth, naturalHeight);
+          width.value = naturalWidth / factor;
+          height.value = naturalHeight / factor;
+        }}
+      >
+        Original
+      </button>
+    </fieldset>
+    <fieldset>
+      <legend>Border:</legend>
+      {
+        (border = (
+          <input
+            type="number"
+            value="10"
+            min="0"
+            max="50"
+            step="0.1"
+            id="border"
+          />
+        ))
+      }
+    </fieldset>
+    <div>
+      {(color = <input type="color" value="#ffffff" id="color" />)}
+      {(submit = <input type="submit" value="Letterbox!" />)}
+    </div>
     {(image = <img />)}
   </>
 );
