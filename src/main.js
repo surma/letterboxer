@@ -44,18 +44,18 @@ import {
   reset as dropZoneReset
 } from "./views/drop-zone.js";
 
-async function blobToImageData(blob) {
+async function blobToImageData(blob, opts) {
   let bitmap;
   if (await hasWorkerizedCreateImageBitmap()) {
-    bitmap = await workerizedBlobToDrawable(blob);
+    bitmap = await workerizedBlobToDrawable(blob, opts);
   } else {
-    bitmap = await blobToDrawable(blob);
+    bitmap = await blobToDrawable(blob, opts);
   }
   let imageData;
   if (await hasWorkerizedOffscreenCanvas()) {
-    imageData = await workerizedDrawableToImageData(bitmap);
+    imageData = await workerizedDrawableToImageData(bitmap, opts);
   } else {
-    imageData = drawableToImageData(bitmap);
+    imageData = drawableToImageData(bitmap, opts);
   }
   return imageData;
 }
@@ -94,7 +94,14 @@ async function main() {
 
   const spinnerViewPromise = import("./views/spinner.js");
   const resultViewPromise = import("./views/result.js");
-  const { submit, border, width, height, color } = await configureViewPromise;
+  const {
+    submit,
+    border,
+    width,
+    height,
+    color,
+    scale
+  } = await configureViewPromise;
   chain = chain
     .pipeThrough(gateOn(fromEvent(submit, "click")))
     .pipeThrough(
@@ -105,7 +112,7 @@ async function main() {
     )
     .pipeThrough(
       map(async file => {
-        const image = await blobToImageData(file);
+        const image = await blobToImageData(file, { scale: scale.value });
         const letterboxedImage = await letterbox(
           image,
           parseInt(width.value),

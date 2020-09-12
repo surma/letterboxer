@@ -29,6 +29,7 @@ let width;
 let height;
 let color;
 let border;
+let scale;
 const view = (
   <>
     <style>{`
@@ -98,6 +99,21 @@ const view = (
         ))
       }
     </fieldset>
+    <fieldset>
+      <legend>Scale:</legend>
+      {
+        (scale = (
+          <input
+            type="number"
+            value="100"
+            min="1"
+            max="100"
+            step="1"
+            id="scale"
+          />
+        ))
+      }
+    </fieldset>
     <div>
       {(color = <input type="color" value="#ffffff" id="color" />)}
       {(submit = <input type="submit" value="Letterbox!" />)}
@@ -115,16 +131,18 @@ async function getWithDefault(key, def) {
 }
 
 (async function() {
-  const [widthV, heightV, colorV, borderV] = await Promise.all([
+  const [widthV, heightV, colorV, borderV, scaleV] = await Promise.all([
     getWithDefault("width", 1),
     getWithDefault("height", 1),
     getWithDefault("color", "#ffffff"),
-    getWithDefault("border", "10")
+    getWithDefault("border", "10"),
+    getWithDefault("scale", "100")
   ]);
   width.value = widthV;
   height.value = heightV;
   color.value = colorV;
   border.value = borderV;
+  scale.value = scaleV;
   combineLatest(
     concat(
       just(widthV),
@@ -145,15 +163,20 @@ async function getWithDefault(key, def) {
     concat(
       just(borderV),
       fromEvent(border, "change").pipeThrough(map(ev => ev.target.value))
+    ),
+    concat(
+      just(scaleV),
+      fromEvent(scale, "change").pipeThrough(map(ev => ev.target.value))
     )
   )
     .pipeThrough(debounce(1000))
     .pipeTo(
-      subscribe(async ([width, height, color, border]) => {
+      subscribe(async ([width, height, color, border, scale]) => {
         set("width", width);
         set("height", height);
         set("color", color);
         set("border", border);
+        set("scale", scale);
       })
     );
 })();
@@ -162,4 +185,4 @@ export function reset() {
   image.src = "";
 }
 
-export { border, view, back, submit, image, width, height, color };
+export { border, view, back, submit, image, width, height, color, scale };

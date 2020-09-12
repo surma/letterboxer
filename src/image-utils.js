@@ -32,16 +32,18 @@ export async function blobToDrawable(blob) {
   }
 }
 
-export function drawableToImageData(drawable) {
+export function drawableToImageData(drawable, { scale = 100 } = {}) {
   let canvas;
+  const width = Math.floor((drawable.width * scale) / 100);
+  const height = Math.floor((drawable.height * scale) / 100);
   if ("OffscreenCanvas" in self) {
-    canvas = new OffscreenCanvas(drawable.width, drawable.height);
+    canvas = new OffscreenCanvas(width, height);
   } else {
-    canvas = <canvas width={drawable.width} height={drawable.height} />;
+    canvas = <canvas width={width} height={height} />;
   }
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(drawable, 0, 0);
-  return ctx.getImageData(0, 0, drawable.width, drawable.height);
+  ctx.drawImage(drawable, 0, 0, width, height);
+  return ctx.getImageData(0, 0, width, height);
 }
 
 export function imageDataToCanvas(imageData, canvas) {
