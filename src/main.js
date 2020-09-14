@@ -126,10 +126,10 @@ async function main() {
     )
     .pipeThrough(
       forEach(async imageData => {
-        const { view, setCanvas } = await resultViewPromise;
+        const { view, setResult } = await resultViewPromise;
         const canvas = imageDataToCanvas(imageData);
         render(output, view);
-        setCanvas(canvas);
+        setResult(canvas);
       })
     )
     .pipeTo(discard());
